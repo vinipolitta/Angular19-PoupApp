@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { SaldoComponent } from "./saldo/saldo.component";
 import { TransacoesComponent } from "./transacoes/transacoes.component";
 import { ContasComponent } from "./contas/contas.component";
@@ -12,9 +12,11 @@ import { Transacao, TipoTransacao } from './compartilhados/transacao.model';
   styleUrl: './area-financeira.component.css'
 })
 export class AreaFinanceiraComponent {
+
+
   saldo = 1000;
 
-  transacoes: Transacao[] = [
+  transacoes = signal<Transacao[]>([
     {
       id: '5',
       nome: '',
@@ -55,9 +57,13 @@ export class AreaFinanceiraComponent {
       data: new Date('2024-10-01T00:00'),
       conta: 'Anybank'
     },
-  ];
+  ]);
 
-  contas: Conta[] = [
+  onTransacaoCriada($event: Transacao) {
+    this.transacoes.update(transacoes => [...transacoes, $event]);
+  }
+
+  contas = signal<Conta[]>([
     {
       nome: 'Anybank',
       saldo: 1000,
@@ -70,5 +76,9 @@ export class AreaFinanceiraComponent {
       nome: 'Switch Bank',
       saldo: 0,
     },
-  ];
+  ]);
+
+  onContaCriada($event: Conta) {
+    this.contas.update(contas => [...contas, $event]);
+  }
 }

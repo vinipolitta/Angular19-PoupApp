@@ -13,7 +13,10 @@ export class TransacaoComponent {
   transacao = input.required<Transacao>();
 
   valor = computed(() => {
-    if (this.transacao().tipo === TipoTransacao.SAQUE) {
+    console.log(this.transacao().tipo);
+    console.log(TipoTransacao.SAQUE);
+    console.log(this.transacao().tipo === TipoTransacao.SAQUE || this.transacao().tipo === TipoTransacao.TRANSFERENCIA);
+    if (this.transacao().tipo === TipoTransacao.SAQUE || this.transacao().tipo === TipoTransacao.TRANSFERENCIA) {
       return -this.transacao().valor;
     }
 

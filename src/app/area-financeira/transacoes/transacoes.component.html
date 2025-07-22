@@ -2,7 +2,7 @@
   <h2 card-titulo class="texto-lg">Movimentação financeira</h2>
   <div class="transacoes-e-botao">
     <ul>
-      @for (transacao of transacoes(); track transacao.id) {
+      @for (transacao of transacoes() | ordenaPorData; track transacao.id) {
       <li class="item-entre-divisorias">
         <app-transacao [transacao]="transacao" />
       </li>
@@ -13,6 +13,6 @@
       }
     </ul>
 
-    <app-botao-adicionar-transacoes class="botao-adicionar-transacao" />
+    <app-botao-adicionar-transacoes [contas]="contas()" (transacaoCriada)="transacaoCriada.emit($event)" class="botao-adicionar-transacao" />
   </div>
 </app-card>

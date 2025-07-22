@@ -1,0 +1,7 @@
+@if (errorMessages.length > 0) {
+<p class="erros">
+    @for (msg of errorMessages; track msg) {
+    {{ msg }}
+    }
+</p>
+}

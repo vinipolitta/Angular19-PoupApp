@@ -1,5 +1,10 @@
 <div class="area-financeira">
   <app-saldo class="saldo" [saldo]="saldo" />
-  <app-transacoes class="transacoes" [transacoes]="transacoes" />
-  <app-contas class="contas" [contas]="contas" />
+  <app-transacoes 
+  (transacaoCriada)="onTransacaoCriada($event)" 
+  class="transacoes" 
+  [transacoes]="transacoes()" 
+  [contas]="contas()"
+  />
+  <app-contas (contaCriada)="onContaCriada($event)" class="contas" [contas]="contas()" />
 </div>

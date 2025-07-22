@@ -6,53 +6,55 @@
 
 <app-modal [(aberto)]="aberto">
     <ng-container modal-cabecalho class="modal-cabecalho">
-      <img src="icones/moeda.svg" alt="">
-      <h2 class="text-xl">Adicionar transação</h2>
+        <img src="icones/moeda.svg" alt="">
+        <h2 class="text-xl">Adicionar transação</h2>
     </ng-container>
-   
-    <form class="form text-md">
-      <label class="label-grupo">
-        Nome da transação
-        <input class="input" type="text" name="nome-transacao">
-      </label>
-   
-      <fieldset class="grupo-tipo-transacao" required>
-        <legend class="legend">Tipo da transação</legend>
-   
-        <label class="label-grupo-radio">
-          <input type="radio" name="tipo-transacao" required>
-          Saque
+
+    <form [formGroup]="form" class="form text-md" (ngSubmit)="onSubmit()">
+        <label class="label-grupo">
+            Nome da transação
+            <input formControlName="nomeTransacao" class="input" type="text" name="nome-transacao">
+            <app-campos-erros [control]="form.get('nomeTransacao')" [messages]="{ required: 'O nome é obrigatório.' }"></app-campos-erros>
         </label>
-   
-        <label class="label-grupo-radio">
-          <input type="radio" name="tipo-transacao" required>
-          Depósito
+
+        <fieldset formGroupName="tipoTransacao" class="grupo-tipo-transacao" required>
+            <legend class="legend">Tipo da transação</legend>
+            @for (tipo of tiposTransacao | keyvalue; track tipo.key) {
+            <label class="label-grupo-radio">
+                <input type="radio" name="tipo" formControlName="tipo" [value]="tipo.key" required>
+                {{ tipo.value }}
+            </label>
+            }
+            <app-campos-erros [control]="form.get('tipoTransacao.tipo')" [messages]="{ required: 'O tipo é obrigatório.' }"></app-campos-erros>
+        </fieldset>
+
+        <label class="label-grupo">
+            Valor
+            <input formControlName="valorTransacao" class="input" type="number" name="valor-transacao" min="0.01"
+                step="0.01" placeholder="R$ 500,00" required>
+            <app-campos-erros [control]="form.get('valorTransacao')" [messages]="{ required: 'O valor é obrigatório.' }"></app-campos-erros>
         </label>
-      </fieldset>
-   
-      <label class="label-grupo">
-        Valor
-        <input class="input" type="number" name="valor-transacao" min="0.01" step="0.01" placeholder="R$ 500,00" required>
-      </label>
-   
-      <label class="label-grupo">
-        Data da transação
-        <input class="input" type="date" name="data-transacao" required>
-      </label>
-   
-      <label class="label-grupo">
-        Conta Bancária
-   
-        <select name="conta-transacao" class="input select-conta-transacao" required>
-          <option value="" selected disabled>Selecione a conta</option>
-   
-          <option value="Anybank">Anybank</option>
-          <option value="Bytebank">Bytebank</option>
-        </select>
-      </label>
-   
-      <app-botao class="botao-adicionar-transacao">
-        Adicionar
-      </app-botao>
+
+        <label class="label-grupo">
+            Data da transação
+            <input formControlName="dataTransacao" class="input" type="date" name="data-transacao" required>
+            <app-campos-erros [control]="form.get('dataTransacao')" [messages]="{ required: 'A data é obrigatória.' }"></app-campos-erros>
+        </label>
+
+        <label class="label-grupo">
+            Conta Bancária
+            <select formControlName="contaTransacao" name="conta-transacao" class="input select-conta-transacao"
+                required>
+                <option value="" selected disabled>Selecione a conta</option>
+                @for (conta of contas(); track conta.nome) {        
+                <option value="{{ conta.nome }}">{{ conta.nome }}</option>
+                }
+            </select>
+            <app-campos-erros [control]="form.get('contaTransacao')" [messages]="{ required: 'A conta é obrigatória.' }"></app-campos-erros>
+        </label>
+
+        <app-botao type="submit" class="botao-adicionar-transacao">
+            Adicionar
+        </app-botao>
     </form>
-  </app-modal>
+</app-modal>

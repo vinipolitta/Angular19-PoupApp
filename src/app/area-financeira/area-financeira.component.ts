@@ -1,4 +1,4 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, computed, output, signal } from '@angular/core';
 import { SaldoComponent } from "./saldo/saldo.component";
 import { TransacoesComponent } from "./transacoes/transacoes.component";
 import { ContasComponent } from "./contas/contas.component";
@@ -13,72 +13,51 @@ import { Transacao, TipoTransacao } from './compartilhados/transacao.model';
 })
 export class AreaFinanceiraComponent {
 
+  saldo = computed(() => {
+    return this.contas().reduce((acc, conta) => {
+      return acc + conta.saldo;
+    }, 0);
+  });
+  
+  contasComSaldoInicial = signal<Conta[]>([]);
 
-  saldo = 1000;
+  contas = computed(() => {
+    return this.contasComSaldoInicial().map(conta => {
+      const saldoAtualizado = this.calculaSaldoAtualizado(conta);
 
-  transacoes = signal<Transacao[]>([
-    {
-      id: '5',
-      nome: '',
-      tipo: TipoTransacao.SAQUE,
-      valor: 200,
-      data: new Date('2025-02-20T00:00'),
-      conta: 'Switch Bank'
-    },
-    {
-      id: '4',
-      nome: 'Almoço',
-      tipo: TipoTransacao.SAQUE,
-      valor: 40,
-      data: new Date('2025-01-15T00:00'),
-      conta: 'Bytebank'
-    },
-    {
-      id: '3',
-      nome: '',
-      tipo: TipoTransacao.DEPOSITO,
-      valor: 400,
-      data: new Date('2025-01-10T00:00'),
-      conta: 'Bytebank'
-    },
-    {
-      id: '2',
-      nome: 'Freela (2ª parte)',
-      tipo: TipoTransacao.DEPOSITO,
-      valor: 200,
-      data: new Date('2024-10-01T00:00'),
-      conta: 'Anybank'
-    },
-    {
-      id: '1',
-      nome: 'Freela (1ª parte)',
-      tipo: TipoTransacao.DEPOSITO,
-      valor: 100,
-      data: new Date('2024-10-01T00:00'),
-      conta: 'Anybank'
-    },
-  ]);
+      return {
+        ...conta,
+        saldo: saldoAtualizado
+      }
+    })
+  });
+
+  calculaSaldoAtualizado(contaInicial: Conta) {
+    const transacoesDaConta = this.transacoes().filter(transacao => { return transacao.conta === contaInicial.nome });
+    const saldoInicial = contaInicial.saldo;
+    const saldoFinal = transacoesDaConta.reduce((acc, transacao) => {
+      
+      switch (transacao.tipo) {
+        case TipoTransacao.DEPOSITO:
+          return acc + transacao.valor;
+        case TipoTransacao.SAQUE:
+        case TipoTransacao.TRANSFERENCIA:
+          return acc - transacao.valor;
+        default:
+          transacao.tipo satisfies never;
+          throw new Error('Tipo de transação não suportado');
+      }
+    }, saldoInicial);
+    return saldoFinal;
+  }
+
+  transacoes = signal<Transacao[]>([]);
 
   onTransacaoCriada($event: Transacao) {
     this.transacoes.update(transacoes => [...transacoes, $event]);
   }
 
-  contas = signal<Conta[]>([
-    {
-      nome: 'Anybank',
-      saldo: 1000,
-    },
-    {
-      nome: 'Bytebank',
-      saldo: 0,
-    },
-    {
-      nome: 'Switch Bank',
-      saldo: 0,
-    },
-  ]);
-
   onContaCriada($event: Conta) {
-    this.contas.update(contas => [...contas, $event]);
+    this.contasComSaldoInicial.update(contas => [...contas, $event]);
   }
 }

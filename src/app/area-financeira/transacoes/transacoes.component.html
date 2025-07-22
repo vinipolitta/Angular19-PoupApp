@@ -1,26 +1,18 @@
-<section class="transacoes-card">
-  <div class="titulo-wrapper">
-    <h2 class="texto-lg">Movimentação financeira</h2>
-  </div>
+<app-card>
+  <h2 card-titulo class="texto-lg">Movimentação financeira</h2>
+  <div class="transacoes-e-botao">
+    <ul>
+      @for (transacao of transacoes(); track transacao.id) {
+      <li class="item-entre-divisorias">
+        <app-transacao [transacao]="transacao" />
+      </li>
+      } @empty {
+      <li aria-hidden="true">
+        Ainda não há transações.
+      </li>
+      }
+    </ul>
 
-  <div class="corpo-card">
-    <div class="transacoes-e-botao">
-      <ul>
-        @for (transacao of transacoes(); track transacao.id) {
-          <li class="item-entre-divisorias">
-            <app-transacao [transacao]="transacao" />
-          </li>
-        } @empty {
-          <li aria-hidden="true">
-            Ainda não há transações.
-          </li>
-        }
-      </ul>
-  
-      <app-botao class="botao-adicionar-transacao" >
-        <img class="icone-moeda" src="icones/moeda.svg" alt="Adicionar transação" />
-        Adicionar transação
-      </app-botao>
-    </div>
+    <app-botao-adicionar-transacoes class="botao-adicionar-transacao" />
   </div>
-</section>
+</app-card>

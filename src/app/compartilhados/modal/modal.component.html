@@ -1,0 +1,19 @@
+<dialog #modal class="dialog">
+    <button class="botao-fechar" (click)="fecharModal()">
+        <img src="icones/fechar.svg" alt="" />
+    </button>
+    <h2>Adicionar transação</h2>
+    <div class="conteudo">
+        <div class="cabecalho">
+          <ng-content select="[modal-cabecalho]">
+            Título padrão
+          </ng-content>
+        </div>
+     
+        <div>
+          <ng-content>
+            Conteúdo padrão
+          </ng-content>
+        </div>
+      </div>
+</dialog>
